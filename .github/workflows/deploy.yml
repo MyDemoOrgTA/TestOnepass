@@ -22,10 +22,8 @@ jobs:
       - name: Load Secrets from 1Password
         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
         env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          DB_PASSWORD: op://ci-production/database/password
-          REGISTRY_TOKEN: op://ci-production/container-registry/token
-          API_KEY: op://ci-production/stripe/api_key
+          DB_PASSWORD: op://Test/DB_PASS/password
+          DB_Username: op://Test/DB_PASS/username
         with:
           export-env: true  # injects resolved values into job env automatically
 
