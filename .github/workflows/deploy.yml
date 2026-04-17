@@ -22,6 +22,7 @@ jobs:
       - name: Load Secrets from 1Password
         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
         env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           DB_PASSWORD: op://Test/DB_PASS/password
           DB_Username: op://Test/DB_PASS/username
         with:
