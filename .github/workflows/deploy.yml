@@ -28,8 +28,8 @@ jobs:
         with:
           export-env: true  # injects resolved values into job env automatically
 
-      # Secrets are now available as real env vars — no op:// strings, no raw values in shell
-      - name: Deploy
-        run: ./scripts/deploy.sh
-        # $DB_PASSWORD, $REGISTRY_TOKEN, $API_KEY are all available here
-        # auto-masked — even if accidentally echoed, they won't appear in logs
+      # # Secrets are now available as real env vars — no op:// strings, no raw values in shell
+      # - name: Deploy
+      #   run: ./scripts/deploy.sh
+      #   # $DB_PASSWORD, $REGISTRY_TOKEN, $API_KEY are all available here
+      #   # auto-masked — even if accidentally echoed, they won't appear in logs
