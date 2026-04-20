@@ -113,7 +113,7 @@ jobs:
     env:
       DB_PASSWORD: op://Test/DB_PASS/password
       DB_USERNAME: op://Test/DB_PASS/username
-      API_KEY: op://Test/Stripe/api_key
+
       # add more secrets here as needed — no other changes required
 
     steps:
