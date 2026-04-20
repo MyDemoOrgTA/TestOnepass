@@ -42,6 +42,62 @@
 
 
 
+# name: Deploy (load-secrets-action)
+
+# on:
+#   push:
+#     branches: [main]
+#   workflow_dispatch:
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Load Secrets from 1Password
+#         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
+#         env:
+#           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+#           DB_PASSWORD: op://Test/DB_PASS/password
+#           DB_USERNAME: op://Test/DB_PASS/username
+#         with:
+#           export-env: true
+
+#       # ✅ Now secrets are available as real env vars in ALL subsequent steps
+#       - name: Deploy
+#         run: |
+#           echo "DB_USERNAME length: ${#DB_USERNAME}"
+#           echo "DB_PASSWORD length: ${#DB_PASSWORD}"
+#           # ./scripts/deploy.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 name: Deploy (load-secrets-action)
 
 on:
@@ -52,22 +108,30 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    # ✅ Declare ALL op:// URIs here — one place, clean, easy to manage
+    env:
+      DB_PASSWORD: op://Test/DB_PASS/password
+      DB_USERNAME: op://Test/DB_PASS/username
+      API_KEY: op://Test/Stripe/api_key
+      # add more secrets here as needed — no other changes required
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ✅ Single auth step — resolves everything declared in job env above
       - name: Load Secrets from 1Password
         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          DB_PASSWORD: op://Test/DB_PASS/password
-          DB_USERNAME: op://Test/DB_PASS/username
         with:
           export-env: true
 
-      # ✅ Now secrets are available as real env vars in ALL subsequent steps
-      - name: Deploy
+      # ✅ All secrets available as real env vars from here onwards
+      - name: Verify (lengths only — values are masked)
         run: |
           echo "DB_USERNAME length: ${#DB_USERNAME}"
           echo "DB_PASSWORD length: ${#DB_PASSWORD}"
-          # ./scripts/deploy.sh
+
+     
