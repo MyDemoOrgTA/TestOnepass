@@ -1,3 +1,47 @@
+# name: Deploy (load-secrets-action)
+
+# on:
+#   push:
+#     branches: [main]
+#   workflow_dispatch:
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       # Optional: Call your shared repo if you need the CLI for 'op run'
+#       # - name: Setup 1Password CLI
+#       #   uses: nensisukhadiya/github-actions-shared/.github/actions/setup-op@main
+#       #   with:
+#       #     op-service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+#       # ✅ This single step resolves ALL op:// URIs and auto-masks every value
+#       - name: Load Secrets from 1Password
+#         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
+#         env:
+#           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+#           DB_PASSWORD: op://Test/DB_PASS/password
+#           DB_Username: op://Test/DB_PASS/username
+#         with:
+#           export-env: true  # injects resolved values into job env automatically
+
+#       # # Secrets are now available as real env vars — no op:// strings, no raw values in shell
+#       # - name: Deploy
+#       #   run: ./scripts/deploy.sh
+#       #   # $DB_PASSWORD, $REGISTRY_TOKEN, $API_KEY are all available here
+#       #   # auto-masked — even if accidentally echoed, they won't appear in logs
+
+
+
+
+
+
+
+
+
 name: Deploy (load-secrets-action)
 
 on:
@@ -12,24 +56,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Optional: Call your shared repo if you need the CLI for 'op run'
-      # - name: Setup 1Password CLI
-      #   uses: nensisukhadiya/github-actions-shared/.github/actions/setup-op@main
-      #   with:
-      #     op-service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-
-      # ✅ This single step resolves ALL op:// URIs and auto-masks every value
+      # ✅ Step 1: Authenticate to 1Password — no op:// URIs here
       - name: Load Secrets from 1Password
         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          DB_PASSWORD: op://Test/DB_PASS/password
-          DB_Username: op://Test/DB_PASS/username
         with:
-          export-env: true  # injects resolved values into job env automatically
+          export-env: true
 
-      # # Secrets are now available as real env vars — no op:// strings, no raw values in shell
-      # - name: Deploy
-      #   run: ./scripts/deploy.sh
-      #   # $DB_PASSWORD, $REGISTRY_TOKEN, $API_KEY are all available here
-      #   # auto-masked — even if accidentally echoed, they won't appear in logs
+      # ✅ Step 2: Declare op:// URIs here — resolved + auto-masked by action above
+      - name: Deploy
+        env:
+          DB_PASSWORD: op://Test/DB_PASS/password
+          DB_USERNAME: op://Test/DB_PASS/username
+        run: |
+          echo "DB_USERNAME length: ${#DB_USERNAME}"
+          echo "DB_PASSWORD length: ${#DB_PASSWORD}"
+          # ./scripts/deploy.sh   ← uncomment for real use
