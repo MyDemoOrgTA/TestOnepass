@@ -56,20 +56,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ✅ Step 1: Authenticate to 1Password — no op:// URIs here
       - name: Load Secrets from 1Password
         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          DB_PASSWORD: op://Test/DB_PASS/password
+          DB_USERNAME: op://Test/DB_PASS/username
         with:
           export-env: true
 
-      # ✅ Step 2: Declare op:// URIs here — resolved + auto-masked by action above
+      # ✅ Now secrets are available as real env vars in ALL subsequent steps
       - name: Deploy
-        env:
-          DB_PASSWORD: op://Test/DB_PASS/password
-          DB_USERNAME: op://Test/DB_PASS/username
         run: |
           echo "DB_USERNAME length: ${#DB_USERNAME}"
           echo "DB_PASSWORD length: ${#DB_PASSWORD}"
-          # ./scripts/deploy.sh   ← uncomment for real use
+          # ./scripts/deploy.sh
