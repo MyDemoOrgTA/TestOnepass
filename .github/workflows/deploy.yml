@@ -150,8 +150,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_ACCESS_KEY_ID: op://Test/AWS/access_key_id/password
-      AWS_SECRET_ACCESS_KEY: op://Test/AWS/secret_access_key/password
+      AWS_ACCESS_KEY_ID: op://Test/access_key_id/password
+      AWS_SECRET_ACCESS_KEY: op://Test/secret_access_key/password
       # Uncomment if using temporary credentials
       # AWS_SESSION_TOKEN: op://Test/AWS/session_token
 
