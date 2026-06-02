@@ -98,6 +98,46 @@
 
 
 
+# name: Deploy (load-secrets-action)
+
+# on:
+#   push:
+#     branches: [main]
+#   workflow_dispatch:
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     # ✅ Declare ALL op:// URIs here — one place, clean, easy to manage
+#     env:
+#       DB_PASSWORD: op://Test/DB_PASS/password
+#       DB_USERNAME: op://Test/DB_PASS/username
+
+#       # add more secrets here as needed — no other changes required
+
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       # ✅ Single auth step — resolves everything declared in job env above
+#       - name: Load Secrets from 1Password
+#         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
+#         env:
+#           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+#         with:
+#           export-env: true
+
+#       # ✅ All secrets available as real env vars from here onwards
+#       - name: Verify (lengths only — values are masked)
+#         run: |
+#           echo "DB_USERNAME length: ${#DB_USERNAME}"
+#           echo "DB_PASSWORD length: ${#DB_PASSWORD}"
+#           echo "$DB_PASSWORD"
+
+
+
+
 name: Deploy (load-secrets-action)
 
 on:
@@ -109,18 +149,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    # ✅ Declare ALL op:// URIs here — one place, clean, easy to manage
     env:
-      DB_PASSWORD: op://Test/DB_PASS/password
-      DB_USERNAME: op://Test/DB_PASS/username
-
-      # add more secrets here as needed — no other changes required
+      AWS_ACCESS_KEY_ID: op://Test/AWS/access_key_id/password
+      AWS_SECRET_ACCESS_KEY: op://Test/AWS/secret_access_key/password
+      # Uncomment if using temporary credentials
+      # AWS_SESSION_TOKEN: op://Test/AWS/session_token
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ✅ Single auth step — resolves everything declared in job env above
       - name: Load Secrets from 1Password
         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
         env:
@@ -128,11 +166,20 @@ jobs:
         with:
           export-env: true
 
-      # ✅ All secrets available as real env vars from here onwards
-      - name: Verify (lengths only — values are masked)
+      - name: Verify AWS credentials are actually working
         run: |
-          echo "DB_USERNAME length: ${#DB_USERNAME}"
-          echo "DB_PASSWORD length: ${#DB_PASSWORD}"
-          echo "$DB_PASSWORD"
+          echo "AWS_ACCESS_KEY_ID length: ${#AWS_ACCESS_KEY_ID}"
+
+          ACCOUNT_ID=$(aws sts get-caller-identity \
+            --query Account \
+            --output text)
+
+          ARN=$(aws sts get-caller-identity \
+            --query Arn \
+            --output text)
+
+          echo "Successfully authenticated"
+          echo "Account: $ACCOUNT_ID"
+          echo "ARN: $ARN"
 
      
