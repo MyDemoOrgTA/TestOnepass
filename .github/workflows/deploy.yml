@@ -156,15 +156,22 @@ jobs:
       # AWS_SESSION_TOKEN: op://Test/AWS/session_token
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Load Secrets from 1Password
-        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
+      - uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         with:
           export-env: true
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # - name: Load Secrets from 1Password
+      #   uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
+      #   env:
+      #     OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      #   with:
+      #     export-env: true
 
       - name: Verify AWS credentials are actually working
         env:
