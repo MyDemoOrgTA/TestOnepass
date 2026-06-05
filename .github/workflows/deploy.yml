@@ -149,34 +149,25 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    # env:
-    #   AWS_ACCESS_KEY_ID: op://Test/access_key_id/password
-    #   AWS_SECRET_ACCESS_KEY: op://Test/secret_access_key/password
+    env:
+      AWS_ACCESS_KEY_ID: op://Test/access_key_id/password
+      AWS_SECRET_ACCESS_KEY: op://Test/secret_access_key/password
       # Uncomment if using temporary credentials
       # AWS_SESSION_TOKEN: op://Test/AWS/session_token
 
     steps:
 
-      - uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Load Secrets from 1Password
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         with:
           export-env: true
 
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      # - name: Load Secrets from 1Password
-      #   uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
-      #   env:
-      #     OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      #   with:
-      #     export-env: true
-
       - name: Verify AWS credentials are actually working
-        env:
-          AWS_ACCESS_KEY_ID: op://Test/access_key_id/password
-          AWS_SECRET_ACCESS_KEY: op://Test/secret_access_key/password
         run: |
           echo "AWS_ACCESS_KEY_ID length: ${#AWS_ACCESS_KEY_ID}"
 
