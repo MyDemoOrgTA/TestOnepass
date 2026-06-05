@@ -138,6 +138,53 @@
 
 
 
+# name: Deploy (load-secrets-action)
+
+# on:
+#   push:
+#     branches: [main]
+#   workflow_dispatch:
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     env:
+#       AWS_ACCESS_KEY_ID: op://Test/access_key_id/password
+#       AWS_SECRET_ACCESS_KEY: op://Test/secret_access_key/password
+#       # Uncomment if using temporary credentials
+#       # AWS_SESSION_TOKEN: op://Test/AWS/session_token
+
+#     steps:
+
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Load Secrets from 1Password
+#         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
+#         env:
+#           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+#         with:
+#           export-env: true
+
+#       - name: Verify AWS credentials are actually working
+#         run: |
+#           echo "AWS_ACCESS_KEY_ID length: ${#AWS_ACCESS_KEY_ID}"
+
+#           ACCOUNT_ID=$(aws sts get-caller-identity \
+#             --query Account \
+#             --output text)
+
+#           ARN=$(aws sts get-caller-identity \
+#             --query Arn \
+#             --output text)
+
+#           echo "Successfully authenticated"
+#           echo "Account: $ACCOUNT_ID"
+#           echo "ARN: $ARN"
+
+
+
 name: Deploy (load-secrets-action)
 
 on:
@@ -152,35 +199,18 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: op://Test/access_key_id/password
       AWS_SECRET_ACCESS_KEY: op://Test/secret_access_key/password
-      # Uncomment if using temporary credentials
-      # AWS_SESSION_TOKEN: op://Test/AWS/session_token
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Load Secrets from 1Password
-        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v2
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         with:
           export-env: true
 
-      - name: Verify AWS credentials are actually working
+      - name: Verify AWS credentials
         run: |
-          echo "AWS_ACCESS_KEY_ID length: ${#AWS_ACCESS_KEY_ID}"
-
-          ACCOUNT_ID=$(aws sts get-caller-identity \
-            --query Account \
-            --output text)
-
-          ARN=$(aws sts get-caller-identity \
-            --query Arn \
-            --output text)
-
-          echo "Successfully authenticated"
-          echo "Account: $ACCOUNT_ID"
-          echo "ARN: $ARN"
-
-     
+          aws sts get-caller-identity
