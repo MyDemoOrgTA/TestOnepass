@@ -201,9 +201,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY: op://Test/secret_access_key/password
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Load Secrets from 1Password
         uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259
         env:
